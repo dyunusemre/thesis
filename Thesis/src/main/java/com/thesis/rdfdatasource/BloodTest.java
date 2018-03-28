@@ -1,15 +1,15 @@
 package com.thesis.rdfdatasource;
 
 public class BloodTest {
+	private Patient patient;
 	private String testType;
 	private Staff isRequested;
 	private Staff isResponsible;
 	private Staff isDoneBy;
 	private TestValue defaultTestValues;
 	private int testResult;
-	public BloodTest(String name, String type,TestValue defValue) {
-		this.isRequested = new Staff(name,type);	
-		this.defaultTestValues = defValue;
+	public BloodTest(Patient patient) {
+		this.patient = patient;
 	}
 	public BloodTest() {};
 	public void setIsRequested(Staff isRequested) {

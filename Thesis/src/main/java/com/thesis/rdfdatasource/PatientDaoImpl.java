@@ -33,17 +33,21 @@ public class PatientDaoImpl implements PatientDao {
 				+ "<http://www.semanticweb.org/mine/ontologies/2017/4/thyroid-ontology#hasTCno> \""
 				+tcNo
 				+"\"^^<http://www.w3.org/2001/XMLSchema#string> .}";
-		String patientUri = ResultDispacther.queryGetResult(queryString);
+		String patientUri = ResultDispacther.queryGetResult(queryString,1);
 		queryString = "SELECT ?o "+ 
     			"WHERE {<"+patientUri+"> <http://www.semanticweb.org/mine/ontologies/2017/4/thyroid-ontology#hasName> ?o .}";
-		String name = ResultDispacther.queryGetResult(queryString);
+		String name = ResultDispacther.queryGetResult(queryString,1);
 		queryString = "SELECT ?o "+ 
     			"WHERE {<"+patientUri+"> <http://www.semanticweb.org/mine/ontologies/2017/4/thyroid-ontology#hasAge> ?o .}";
-		String age = ResultDispacther.queryGetResult(queryString);
+		String age = ResultDispacther.queryGetResult(queryString,1);
 		queryString = "SELECT ?o "+ 
     			"WHERE {<"+patientUri+"> <http://www.semanticweb.org/mine/ontologies/2017/4/thyroid-ontology#hasGender> ?o .}";
-		String gender = ResultDispacther.queryGetResult(queryString);
+		String gender = ResultDispacther.queryGetResult(queryString,1);	
 		Patient p = new Patient(name,gender,Integer.parseInt(age));
+		p.setId(tcNo);
+		BloodTestDaoImpl b = new BloodTestDaoImpl();
+		p.setTest(b.getAllTest(p));
+		
 		return p;
 		
 	}

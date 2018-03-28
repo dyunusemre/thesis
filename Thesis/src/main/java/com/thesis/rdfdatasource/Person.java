@@ -3,12 +3,12 @@ package com.thesis.rdfdatasource;
 public abstract class Person {
 	private String name;
 	private String surname;
-	private long id;
+	private String id;
 	
 	public Person(String name) {
 		this.name = name;
 	}
-	public long getId() {
+	public String getId() {
 		return id;
 	}
 	public String getName() {
@@ -17,7 +17,7 @@ public abstract class Person {
 	public String getSurname() {
 		return surname;
 	}
-	public void setId(long id) {
+	public void setId(String id) {
 		this.id = id;
 	}
 	public void setName(String name) {

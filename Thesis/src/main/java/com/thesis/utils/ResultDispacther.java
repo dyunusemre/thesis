@@ -14,7 +14,7 @@ public class ResultDispacther {
 	private static ResultSet resultSet;
 	private static ByteArrayOutputStream baos;
 	
-	public static String queryGetResult(String queryStr) {
+	public static String queryGetResult(String queryStr,int trimCount) {
 		
 		query = QueryFactory.create(queryStr);
 		QueryExecution q1Exe = QueryExecutionFactory.create(query,DatabaseConn.getModel());
@@ -22,7 +22,7 @@ public class ResultDispacther {
 		baos = new ByteArrayOutputStream();
 		ResultSetFormatter.outputAsCSV(baos,resultSet);
 		String result = baos.toString();
-		result = result.substring(1).trim();
+		result = result.substring(trimCount).trim();
 		return result;
 	}
 }
