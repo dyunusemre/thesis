@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -17,8 +18,13 @@ import com.thesis.utils.URIconstants;
 public class PersonController {
 	
 	PatientDaoImpl dao = new PatientDaoImpl();
-	@RequestMapping("/patient/{id}")
-	public @ResponseBody Patient getPatient(@PathVariable("id") String tcNo){	
+	
+	@RequestMapping(
+			value ="/patient",
+			params = {"id"}, 
+			method = RequestMethod.GET)
+	@ResponseBody
+	public  Patient getPatient(@RequestParam("id") String tcNo){	
 		Patient p = dao.getPatient(tcNo);
 		return p;
 	}

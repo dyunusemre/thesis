@@ -9,6 +9,7 @@ public class DB {
 	public final static String DB_URL = "jdbc:oracle:thin:@localhost:1521:thss";
 	public final static String MODEL = "TestModel";
 	public final static String TABLE_NAME = "TestModel_TPL";
+	public final static String SPARQL_LINK = "<http://www.semanticweb.org/mine/ontologies/2017/4/thyroid-ontology";
 	private static Properties login = new Properties();
 	//set database username and password
 	static {

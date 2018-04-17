@@ -1,5 +1,7 @@
 package com.thesis.utils;
 
+import java.nio.charset.Charset;
+
 import org.apache.commons.io.output.ByteArrayOutputStream;
 
 import com.hp.hpl.jena.query.Query;
@@ -21,7 +23,7 @@ public class ResultDispacther {
 		resultSet = q1Exe.execSelect();
 		baos = new ByteArrayOutputStream();
 		ResultSetFormatter.outputAsCSV(baos,resultSet);
-		String result = baos.toString();
+		String result = baos.toString(Charset.defaultCharset());
 		result = result.substring(trimCount).trim();
 		return result;
 	}
