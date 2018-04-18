@@ -1,5 +1,11 @@
 package com.thesis.rdfdatasource;
 
-public class StaffDao {
+import java.util.List;
 
+public interface StaffDao {
+	public List<Staff> getAllStaff();
+	public Staff getStaff(String staffID);
+	public Staff getStaffOfPatient(String staffUri);
+	public void updatePatient(Staff staff);
+	public void deletePatient(Staff staff);
 }

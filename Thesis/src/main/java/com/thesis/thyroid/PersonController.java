@@ -12,22 +12,41 @@ import org.springframework.web.bind.annotation.RestController;
 import com.thesis.rdfdatasource.BloodTest;
 import com.thesis.rdfdatasource.Patient;
 import com.thesis.rdfdatasource.PatientDaoImpl;
+import com.thesis.rdfdatasource.Staff;
+import com.thesis.rdfdatasource.StaffDaoImpl;
 import com.thesis.utils.URIconstants;
 
 @RestController
 public class PersonController {
 	
-	PatientDaoImpl dao = new PatientDaoImpl();
+	PatientDaoImpl pdao = new PatientDaoImpl();
+	StaffDaoImpl sdao = new StaffDaoImpl();
 	
 	@RequestMapping(
 			value ="/patient",
 			params = {"id"}, 
 			method = RequestMethod.GET)
-	@ResponseBody
-	public  Patient getPatient(@RequestParam("id") String tcNo){	
-		Patient p = dao.getPatient(tcNo);
-		return p;
+	public @ResponseBody Patient getPatient(@RequestParam("id") String tcNo){	
+		Patient p = pdao.getPatient(tcNo);
+		return p;	
 	}
+	
+	@RequestMapping(
+			value ="/allpatient",
+			method = RequestMethod.GET)
+	public @ResponseBody List<Patient> getAllPatient(){
+		return pdao.getAllPatient();
+	}
+	
+	@RequestMapping(
+			value ="/staff",
+			params = {"staffID"}, 
+			method = RequestMethod.GET)
+	public @ResponseBody Staff getStaff(@RequestParam("staffID") String staffId){	
+		Staff s = sdao.getStaff(staffId);
+		return s;	
+	}
+
 	@RequestMapping(value = URIconstants.GET_TESTS, method = RequestMethod.GET )
 	public @ResponseBody List<BloodTest> getTestofPatient() {
 		return null;

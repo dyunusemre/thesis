@@ -1,7 +1,9 @@
 package com.thesis.rdfdatasource;
 
 import java.nio.charset.Charset;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Scanner;
 
 import org.apache.commons.io.output.ByteArrayOutputStream;
 
@@ -23,7 +25,20 @@ public class PatientDaoImpl implements PatientDao {
 	@Override
 	public List<Patient> getAllPatient() {
 		// TODO Auto-generated method stub
-		return null;
+		List<Patient> pList = new ArrayList<>();
+		String queryString = "SELECT ?tcno "
+				  + "WHERE { ?s <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.semanticweb.org/mine/ontologies/2017/4/thyroid-ontology#patient>."
+				  + "?s <http://www.semanticweb.org/mine/ontologies/2017/4/thyroid-ontology#hasTCno> ?tcno .} ";
+
+				List<String> items = new ArrayList<>();
+				Scanner sc = new Scanner(ResultDispacther.queryGetResult(queryString,4));
+				while(sc.hasNext()){
+					items.add(sc.next());
+				}
+				for (String tcNo : items) {
+					pList.add(this.getPatient(tcNo));
+				}
+		return pList;
 	}
 
 	@Override
@@ -38,6 +53,10 @@ public class PatientDaoImpl implements PatientDao {
     			"WHERE {<"+patientUri+"> <http://www.semanticweb.org/mine/ontologies/2017/4/thyroid-ontology#hasName> ?o .}";
 		String name = ResultDispacther.queryGetResult(queryString,1);
 		queryString = "SELECT ?o "+ 
+    			"WHERE {<"+patientUri+"> <http://www.semanticweb.org/mine/ontologies/2017/4/thyroid-ontology#hasSurname> ?o .}";
+		String surname = ResultDispacther.queryGetResult(queryString,1);
+		
+		queryString = "SELECT ?o "+ 
     			"WHERE {<"+patientUri+"> <http://www.semanticweb.org/mine/ontologies/2017/4/thyroid-ontology#hasAge> ?o .}";
 		String age = ResultDispacther.queryGetResult(queryString,1);
 		queryString = "SELECT ?o "+ 
@@ -45,6 +64,7 @@ public class PatientDaoImpl implements PatientDao {
 		String gender = ResultDispacther.queryGetResult(queryString,1);	
 		Patient p = new Patient(name,gender,Integer.parseInt(age));
 		p.setId(tcNo);
+		p.setSurname(surname);
 		BloodTestDaoImpl b = new BloodTestDaoImpl();
 		p.setTest(b.getAllTest(p));
 		
