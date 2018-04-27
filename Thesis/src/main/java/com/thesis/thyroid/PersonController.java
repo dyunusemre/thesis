@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.thesis.rdfdatasource.BloodTest;
+import com.thesis.rdfdatasource.BloodTestDaoImpl;
 import com.thesis.rdfdatasource.Patient;
 import com.thesis.rdfdatasource.PatientDaoImpl;
 import com.thesis.rdfdatasource.Staff;
@@ -25,6 +26,7 @@ public class PersonController {
 	
 	PatientDaoImpl pdao = new PatientDaoImpl();
 	StaffDaoImpl sdao = new StaffDaoImpl();
+	BloodTestDaoImpl bdao = new BloodTestDaoImpl();
 	
 	@RequestMapping(
 			value ="/patient",
@@ -72,5 +74,25 @@ public class PersonController {
 		return null;
 	}
 
+	@RequestMapping(
+			value ="/patient",
+			params = {"id"}, 
+			method = RequestMethod.DELETE)
+	public ResponseEntity<Patient>  deletePatient(@RequestParam("id") String tcNo){	
+		if(pdao.isPatientExist(tcNo)){
+		Patient p = pdao.getPatient(tcNo);	
+		pdao.deletePatient(p);
+		return new ResponseEntity<Patient>(HttpStatus.NO_CONTENT);
+		}
+		return new ResponseEntity<Patient>(HttpStatus.NOT_FOUND);
+	}
+	
+	@RequestMapping(value = "/patient/deleteTest",
+		    params = {"id", "name"},
+		    method = RequestMethod.DELETE)
+	public ResponseEntity<BloodTest> deleteTest(@RequestParam("id") String tcNO, @RequestParam("name") String name) {
+		bdao.deleteTest(pdao.getPatient(tcNO), name);
+	return new ResponseEntity<BloodTest>(HttpStatus.NO_CONTENT); 
+	}
 	
 }

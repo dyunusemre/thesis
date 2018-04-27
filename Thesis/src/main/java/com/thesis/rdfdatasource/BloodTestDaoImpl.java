@@ -1,5 +1,7 @@
 package com.thesis.rdfdatasource;
 
+import java.sql.Connection;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -59,16 +61,44 @@ public class BloodTestDaoImpl implements BloodTestDao {
 		return null;
 	}
 
-	@Override
-	public void deleteTest(Patient p) {
-		// eklenecek
-		
-	}
-
+	
 	@Override
 	public void updateTest(Patient p) {
 		// TODO Auto-generated method stub
 		
 	}
+
+	@Override
+	public void deleteTest(Patient p, String testName) {
+		// TODO Auto-generated method stub
+		oracle.spatial.rdf.client.jena.Oracle oracle = new oracle.spatial.rdf.client.jena.Oracle(DB.DB_URL, DB.USER_NAME, DB.PASSWORD);
+		try {	
+			Connection conn = oracle.getConnection();
+			Statement stmt = conn.createStatement();
+			String queryString = "SELECT ?s  " 
+					+ "WHERE {?s "
+					+ "<http://www.semanticweb.org/mine/ontologies/2017/4/thyroid-ontology#hasTCno> \""
+					+p.getId()
+					+"\"^^<http://www.w3.org/2001/XMLSchema#string> .}";
+		    String subject = ResultDispacther.queryGetResult(queryString,1);
+            queryString = "SELECT ?t " 
+					 + "WHERE {<"+subject+"> <http://www.semanticweb.org/mine/ontologies/2017/4/thyroid-ontology#hasTest> ?t ."
+				     + "?t <http://www.semanticweb.org/mine/ontologies/2017/4/thyroid-ontology#hasTestName> \""
+					        + testName
+					        +"\"^^<http://www.w3.org/2001/XMLSchema#string> . }";
+			String testSubject = ResultDispacther.queryGetResult(queryString,1);
+		    queryString = "DELETE FROM TestModel_TPL t "
+				+"WHERE t.triple.GET_SUBJECT() = '<"+testSubject+">'";
+			stmt.execute(queryString);
+			stmt.execute("COMMIT");
+			stmt.close();
+			conn.close();
+			oracle.dispose();
+		}catch (Exception e) {
+			e.printStackTrace();	// TODO: handle exception
+		}
+		
+	}
+
 	
 }

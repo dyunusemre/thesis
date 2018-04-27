@@ -86,7 +86,26 @@ public class PatientDaoImpl implements PatientDao {
 
 	@Override
 	public void deletePatient(Patient patient) {
-		// TODO Auto-generated method stub
+		oracle.spatial.rdf.client.jena.Oracle oracle = new oracle.spatial.rdf.client.jena.Oracle(DB.DB_URL, DB.USER_NAME, DB.PASSWORD);
+		try {			
+			Connection conn = oracle.getConnection();
+			Statement stmt = conn.createStatement();			
+			String queryString = "SELECT ?s  " 
+								+ "WHERE {?s "
+								+ "<http://www.semanticweb.org/mine/ontologies/2017/4/thyroid-ontology#hasTCno> \""
+								+patient.getId()
+								+"\"^^<http://www.w3.org/2001/XMLSchema#string> .}";		
+			String object = ResultDispacther.queryGetResult(queryString,1);
+			queryString = "DELETE FROM TestModel_TPL t "
+						+"WHERE t.triple.GET_SUBJECT() = '<"+object+">'";			
+			stmt.execute(queryString);
+			stmt.execute("COMMIT");		
+			stmt.close();
+			conn.close();
+			oracle.dispose();				
+		}catch (Exception e) {
+			e.printStackTrace();// TODO: handle exception
+		}
 		
 	}
 	
