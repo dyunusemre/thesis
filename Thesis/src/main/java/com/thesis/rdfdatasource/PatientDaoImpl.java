@@ -80,7 +80,7 @@ public class PatientDaoImpl implements PatientDao {
 
 	@Override
 	public void updatePatient(Patient patient) {
-		// TODO Auto-generated method stub
+		// commit deneme12..
 		
 	}
 
