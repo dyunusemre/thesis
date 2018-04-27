@@ -2,7 +2,11 @@ package com.thesis.thyroid;
 
 import java.util.List;
 
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -32,6 +36,22 @@ public class PersonController {
 	}
 	
 	@RequestMapping(
+			value = "/postPatient",
+			method = RequestMethod.POST,
+			produces = "application/json", 
+			consumes = "application/json"			
+			)
+	public ResponseEntity<Patient> createPatient(@RequestBody Patient patient){
+		if(pdao.isPatientExist(patient.getId())) {
+			return new ResponseEntity<Patient>(patient,HttpStatus.CONFLICT);
+		}else {
+			pdao.addPatient(patient);
+			return new ResponseEntity<Patient>(patient,HttpStatus.CREATED);
+		}
+		
+	}
+	
+	@RequestMapping(
 			value ="/allpatient",
 			method = RequestMethod.GET)
 	public @ResponseBody List<Patient> getAllPatient(){
@@ -51,4 +71,6 @@ public class PersonController {
 	public @ResponseBody List<BloodTest> getTestofPatient() {
 		return null;
 	}
+
+	
 }

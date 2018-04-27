@@ -29,12 +29,8 @@ public class StaffDaoImpl implements StaffDao {
 		String name = ResultDispacther.queryGetResult(queryString,1);
 		queryString = "SELECT ?o "+ 
     			"WHERE {<"+staffUri+"> <http://www.semanticweb.org/mine/ontologies/2017/4/thyroid-ontology#hasSurname> ?o .}";
-		String surname = ResultDispacther.queryGetResult(queryString,1);
-		
-		Staff s = new Staff(name,staffUri.substring(67));
-		s.setId(staffID);
-		s.setSurname(surname);
-		
+		String surname = ResultDispacther.queryGetResult(queryString,1);	
+		Staff s = new Staff(name,surname,staffID,staffUri.substring(67));
 		return s;
 	}
 
@@ -49,10 +45,7 @@ public class StaffDaoImpl implements StaffDao {
 						+"<"+staffUri+"> <http://www.semanticweb.org/mine/ontologies/2017/4/thyroid-ontology#hasSurname> ?surname."
 						+"<"+staffUri+"> <http://www.semanticweb.org/mine/ontologies/2017/4/thyroid-ontology#hasName> ?name.}";
 		List<String> items = Arrays.asList(ResultDispacther.queryGetResult(queryString,21).split(","));	
-		staff = new Staff(items.get(0),staffUri.substring(67));
-		staff.setSurname(items.get(1));
-		staff.setId(items.get(2));
-		
+		staff = new Staff(items.get(1),items.get(2),items.get(0),staffUri.substring(67));	
 		return staff;
 	}
 

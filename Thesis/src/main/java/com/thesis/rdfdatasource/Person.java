@@ -1,12 +1,22 @@
 package com.thesis.rdfdatasource;
 
-public abstract class Person {
+import java.io.Serializable;
+
+public abstract class Person implements Serializable  {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	private String name;
 	private String surname;
 	private String id;
-	
-	public Person(String name) {
+	public Person() {
+		
+	}
+	public Person(String name,String surname,String id) {
 		this.name = name;
+		this.surname = surname;
+		this.id = id;
 	}
 	public String getId() {
 		return id;

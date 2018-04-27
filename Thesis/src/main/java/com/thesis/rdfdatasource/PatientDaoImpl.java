@@ -1,26 +1,18 @@
 package com.thesis.rdfdatasource;
 
-import java.nio.charset.Charset;
+
+import java.sql.Connection;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
-import org.apache.commons.io.output.ByteArrayOutputStream;
-
-import com.hp.hpl.jena.query.Query;
-import com.hp.hpl.jena.query.QueryExecException;
-import com.hp.hpl.jena.query.QueryExecution;
-import com.hp.hpl.jena.query.QueryExecutionFactory;
-import com.hp.hpl.jena.query.QueryFactory;
-import com.hp.hpl.jena.query.ResultSet;
-import com.hp.hpl.jena.query.ResultSetFormatter;
-import com.thesis.utils.DatabaseConn;
+import com.thesis.utils.DB;
 import com.thesis.utils.ResultDispacther;
 
+import oracle.spatial.rdf.client.jena.Oracle;
+
 public class PatientDaoImpl implements PatientDao {
-	
-	private String resultString;
-	private String SQL;
 	
 	@Override
 	public List<Patient> getAllPatient() {
@@ -31,6 +23,7 @@ public class PatientDaoImpl implements PatientDao {
 				  + "?s <http://www.semanticweb.org/mine/ontologies/2017/4/thyroid-ontology#hasTCno> ?tcno .} ";
 
 				List<String> items = new ArrayList<>();
+				@SuppressWarnings("resource")
 				Scanner sc = new Scanner(ResultDispacther.queryGetResult(queryString,4));
 				while(sc.hasNext()){
 					items.add(sc.next());
@@ -40,7 +33,21 @@ public class PatientDaoImpl implements PatientDao {
 				}
 		return pList;
 	}
-
+	
+	public boolean isPatientExist(String tcNo) {
+		String queryString = "SELECT ?s " 
+				+ "WHERE {?s "
+				+ "<http://www.semanticweb.org/mine/ontologies/2017/4/thyroid-ontology#hasTCno> \""
+				+tcNo
+				+"\"^^<http://www.w3.org/2001/XMLSchema#string> .}";
+		String patientUri = ResultDispacther.queryGetResult(queryString,1);
+		if(patientUri.equals("")) {
+			return false;
+		}else {
+			return true;
+		}
+	}
+	
 	@Override
 	public Patient getPatient(String tcNo) {
 		String queryString = "SELECT ?s " 
@@ -62,9 +69,8 @@ public class PatientDaoImpl implements PatientDao {
 		queryString = "SELECT ?o "+ 
     			"WHERE {<"+patientUri+"> <http://www.semanticweb.org/mine/ontologies/2017/4/thyroid-ontology#hasGender> ?o .}";
 		String gender = ResultDispacther.queryGetResult(queryString,1);	
-		Patient p = new Patient(name,gender,Integer.parseInt(age));
-		p.setId(tcNo);
-		p.setSurname(surname);
+		
+		Patient p = new Patient(name,surname,tcNo,new ArrayList<BloodTest>(),gender,Integer.parseInt(age));
 		BloodTestDaoImpl b = new BloodTestDaoImpl();
 		p.setTest(b.getAllTest(p));
 		
@@ -83,5 +89,80 @@ public class PatientDaoImpl implements PatientDao {
 		// TODO Auto-generated method stub
 		
 	}
-
+	
+	@Override
+	public void addPatient(Patient patient) {
+		// TODO Auto-generated method stub
+		
+		String subject = DB.SPARQL_LINK+"#patient+"+patient.getId()+">";
+		String property = DB.SPARQL_LINK+"#hasTCno>";
+		String object = "\""+patient.getId()+"\"^^<http://www.w3.org/2001/XMLSchema#string>";
+		String queryString;
+		Oracle oracle = new Oracle(DB.DB_URL, DB.USER_NAME, DB.PASSWORD);
+		
+		try {	
+			Connection conn = oracle.getConnection();
+			Statement stmt = conn.createStatement();
+			
+			queryString = "INSERT INTO  TESTMODEL_TPL VALUES ("+
+					"SDO_RDF_TRIPLE_S('"+DB.MODEL+"', '"+subject+"', '"+property+"', '"+object+
+					"'))";
+			stmt.execute(queryString);
+			stmt.execute("COMMIT");
+	
+			//defines type
+			
+			property = "<http://www.w3.org/1999/02/22-rdf-syntax-ns#type>";
+		    object = DB.SPARQL_LINK+"#patient>";
+		    queryString = "INSERT INTO  TestModel_TPL VALUES ("+
+					"SDO_RDF_TRIPLE_S('"+DB.MODEL+"', '"+subject+"', '"+property+"', '"+object+
+					"'))";
+			stmt.execute(queryString);
+			stmt.execute("COMMIT");
+			
+			// name adding
+			
+			property = DB.SPARQL_LINK+"#hasName>";
+		    object = "\""+patient.getName()+"\"^^<http://www.w3.org/2001/XMLSchema#string>";
+		    queryString = "INSERT INTO  TestModel_TPL VALUES ("+
+					"SDO_RDF_TRIPLE_S('"+DB.MODEL+"', '"+subject+"', '"+property+"', '"+object+
+					"'))";
+			stmt.execute(queryString);
+			stmt.execute("COMMIT");
+			
+			//surname adding 
+			property = DB.SPARQL_LINK+"#hasSurname>";
+		    object = "\""+patient.getSurname()+"\"^^<http://www.w3.org/2001/XMLSchema#string>";
+		    queryString = "INSERT INTO  TestModel_TPL VALUES ("+
+					"SDO_RDF_TRIPLE_S('"+DB.MODEL+"', '"+subject+"', '"+property+"', '"+object+
+					"'))";
+			stmt.execute(queryString);
+			stmt.execute("COMMIT");
+			
+			//gender adding 
+			property = DB.SPARQL_LINK+"#hasGender>";
+		    object = "\""+patient.getGender()+"\"^^<http://www.w3.org/2001/XMLSchema#string>";
+		    queryString = "INSERT INTO  TestModel_TPL VALUES ("+
+					"SDO_RDF_TRIPLE_S('"+DB.MODEL+"', '"+subject+"', '"+property+"', '"+object+
+					"'))";
+			stmt.execute(queryString);
+			stmt.execute("COMMIT");
+			
+			//age adding 
+			property = DB.SPARQL_LINK+"#hasAge>";
+		    object = "\""+Integer.toString(patient.getAge())+"\"^^<http://www.w3.org/2001/XMLSchema#integer>";
+		    queryString = "INSERT INTO  TestModel_TPL VALUES ("+
+					"SDO_RDF_TRIPLE_S('"+DB.MODEL+"', '"+subject+"', '"+property+"', '"+object+
+					"'))";
+			stmt.execute(queryString);
+			stmt.execute("COMMIT");
+			
+			stmt.close();
+			conn.close();
+			oracle.dispose();
+		    
+		}catch (Exception e) {
+		e.printStackTrace();// TODO: handle exception
+		}
+	}
 }

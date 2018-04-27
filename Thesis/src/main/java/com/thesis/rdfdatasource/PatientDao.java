@@ -7,4 +7,5 @@ public interface PatientDao {
 	public Patient getPatient(String tcNo);
 	public void updatePatient(Patient patient);
 	public void deletePatient(Patient patient);
+	public void addPatient(Patient patient);
 }
