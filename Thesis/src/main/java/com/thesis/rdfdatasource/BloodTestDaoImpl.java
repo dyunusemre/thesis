@@ -61,7 +61,7 @@ public class BloodTestDaoImpl implements BloodTestDao {
 
 	@Override
 	public void deleteTest(Patient p) {
-		// TODO Auto-generated method stub
+		// eklenecek
 		
 	}
 
