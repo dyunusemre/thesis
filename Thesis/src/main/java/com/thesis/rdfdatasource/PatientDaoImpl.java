@@ -86,7 +86,7 @@ public class PatientDaoImpl implements PatientDao {
 
 	@Override
 	public void deletePatient(Patient patient) {
-		oracle.spatial.rdf.client.jena.Oracle oracle = new oracle.spatial.rdf.client.jena.Oracle(DB.DB_URL, DB.USER_NAME, DB.PASSWORD);
+		Oracle oracle = new Oracle(DB.DB_URL, DB.USER_NAME, DB.PASSWORD);
 		try {			
 			Connection conn = oracle.getConnection();
 			Statement stmt = conn.createStatement();			
@@ -113,7 +113,7 @@ public class PatientDaoImpl implements PatientDao {
 	public void addPatient(Patient patient) {
 		// TODO Auto-generated method stub
 		
-		String subject = DB.SPARQL_LINK+"#patient+"+patient.getId()+">";
+		String subject = DB.SPARQL_LINK+"#patient"+patient.getId()+">";
 		String property = DB.SPARQL_LINK+"#hasTCno>";
 		String object = "\""+patient.getId()+"\"^^<http://www.w3.org/2001/XMLSchema#string>";
 		String queryString;

@@ -3,12 +3,13 @@ package com.thesis.rdfdatasource;
 import java.sql.Connection;
 import java.sql.Statement;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Scanner;
 
 import com.thesis.utils.DB;
 import com.thesis.utils.ResultDispacther;
+
+import oracle.spatial.rdf.client.jena.Oracle;
 
 public class BloodTestDaoImpl implements BloodTestDao {
 
@@ -34,8 +35,9 @@ public class BloodTestDaoImpl implements BloodTestDao {
 		List<String> items = new ArrayList<>();
 		BloodTest b;
 		String[] infos;
+		@SuppressWarnings("resource")
 		Scanner sc = new Scanner(ResultDispacther.queryGetResult(queryString,39));
-		
+	
 		while(sc.hasNext()) {
 			items.add(sc.next());
 		}
@@ -71,7 +73,7 @@ public class BloodTestDaoImpl implements BloodTestDao {
 	@Override
 	public void deleteTest(Patient p, String testName) {
 		// TODO Auto-generated method stub
-		oracle.spatial.rdf.client.jena.Oracle oracle = new oracle.spatial.rdf.client.jena.Oracle(DB.DB_URL, DB.USER_NAME, DB.PASSWORD);
+		Oracle oracle = new Oracle(DB.DB_URL, DB.USER_NAME, DB.PASSWORD);
 		try {	
 			Connection conn = oracle.getConnection();
 			Statement stmt = conn.createStatement();
@@ -97,7 +99,6 @@ public class BloodTestDaoImpl implements BloodTestDao {
 		}catch (Exception e) {
 			e.printStackTrace();	// TODO: handle exception
 		}
-		
 	}
 
 	

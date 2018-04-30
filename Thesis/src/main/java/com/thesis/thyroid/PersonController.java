@@ -3,9 +3,7 @@ package com.thesis.thyroid;
 import java.util.List;
 
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -24,15 +22,16 @@ import com.thesis.utils.URIconstants;
 @RestController
 public class PersonController {
 	
-	PatientDaoImpl pdao = new PatientDaoImpl();
-	StaffDaoImpl sdao = new StaffDaoImpl();
-	BloodTestDaoImpl bdao = new BloodTestDaoImpl();
+	
+	
+	
 	
 	@RequestMapping(
 			value ="/patient",
 			params = {"id"}, 
 			method = RequestMethod.GET)
 	public @ResponseBody Patient getPatient(@RequestParam("id") String tcNo){	
+		PatientDaoImpl pdao = new PatientDaoImpl();
 		Patient p = pdao.getPatient(tcNo);
 		return p;	
 	}
@@ -44,6 +43,7 @@ public class PersonController {
 			consumes = "application/json"			
 			)
 	public ResponseEntity<Patient> createPatient(@RequestBody Patient patient){
+		PatientDaoImpl pdao = new PatientDaoImpl();
 		if(pdao.isPatientExist(patient.getId())) {
 			return new ResponseEntity<Patient>(patient,HttpStatus.CONFLICT);
 		}else {
@@ -57,6 +57,7 @@ public class PersonController {
 			value ="/allpatient",
 			method = RequestMethod.GET)
 	public @ResponseBody List<Patient> getAllPatient(){
+		PatientDaoImpl pdao = new PatientDaoImpl();
 		return pdao.getAllPatient();
 	}
 	
@@ -65,11 +66,13 @@ public class PersonController {
 			params = {"staffID"}, 
 			method = RequestMethod.GET)
 	public @ResponseBody ResponseEntity<Staff> getStaff(@RequestParam("staffID") String staffId){	
+		StaffDaoImpl sdao = new StaffDaoImpl();
 		Staff s = sdao.getStaff(staffId);
 		if(sdao.isStaffExist(staffId)) {
-			return new ResponseEntity<Staff>(HttpStatus.NO_CONTENT);
-		}else {
 			return new ResponseEntity<Staff>(s,HttpStatus.OK);
+			
+		}else {
+			return new ResponseEntity<Staff>(HttpStatus.NO_CONTENT);
 		}
 	}
 
@@ -83,6 +86,7 @@ public class PersonController {
 			params = {"id"}, 
 			method = RequestMethod.DELETE)
 	public ResponseEntity<Patient>  deletePatient(@RequestParam("id") String tcNo){	
+		PatientDaoImpl pdao = new PatientDaoImpl();
 		if(pdao.isPatientExist(tcNo)){
 		Patient p = pdao.getPatient(tcNo);	
 		pdao.deletePatient(p);
@@ -95,17 +99,18 @@ public class PersonController {
 		    params = {"id", "name"},
 		    method = RequestMethod.DELETE)
 	public ResponseEntity<BloodTest> deleteTest(@RequestParam("id") String tcNO, @RequestParam("name") String name) {
+		BloodTestDaoImpl bdao = new BloodTestDaoImpl();
+		PatientDaoImpl pdao = new PatientDaoImpl();	
 		bdao.deleteTest(pdao.getPatient(tcNO), name);
 	return new ResponseEntity<BloodTest>(HttpStatus.NO_CONTENT); 
 	}
 	
 	@RequestMapping(
 			value = "/postStaff",
-			method = RequestMethod.POST,
-			produces = "application/json", 
-			consumes = "application/json"			
+			method = RequestMethod.POST			
 			)
 	public ResponseEntity<Void> createStaff(@RequestBody Staff staff){
+		StaffDaoImpl sdao = new StaffDaoImpl();
 		if(sdao.isStaffExist(staff.getId())) {
 			return new ResponseEntity<>(HttpStatus.CONFLICT);
 		}else {
