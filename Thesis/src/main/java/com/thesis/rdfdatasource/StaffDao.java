@@ -6,6 +6,9 @@ public interface StaffDao {
 	public List<Staff> getAllStaff();
 	public Staff getStaff(String staffID);
 	public Staff getStaffOfPatient(String staffUri);
-	public void updatePatient(Staff staff);
-	public void deletePatient(Staff staff);
+	public void addStaff(Staff staff);
+	public void updateStaff(Staff staff);
+	public void deleteStaff(Staff staff);
+	public boolean isStaffExist(String staffID);
+	
 }
