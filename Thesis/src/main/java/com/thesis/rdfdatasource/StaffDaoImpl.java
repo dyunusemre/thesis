@@ -47,7 +47,7 @@ public class StaffDaoImpl implements StaffDao {
 		Staff staff;
 		//http://www.semanticweb.org/mine/ontologies/2017/4/thyroid-ontology#nurse1
 
-		String queryString = "SELECT ?staffId ?name ?surname ?type"+ 
+		String queryString = "SELECT ?staffId ?name ?surname ?type "+ 
 				"WHERE {<"+staffUri+"> <http://www.semanticweb.org/mine/ontologies/2017/4/thyroid-ontology#hasStaffID> ?staffId."
 						+"<"+staffUri+"> <http://www.semanticweb.org/mine/ontologies/2017/4/thyroid-ontology#hasSurname> ?surname."
 						+"<"+staffUri+"> <http://www.semanticweb.org/mine/ontologies/2017/4/thyroid-ontology#hasName> ?name."
