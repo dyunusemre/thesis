@@ -64,9 +64,13 @@ public class PersonController {
 			value ="/staff",
 			params = {"staffID"}, 
 			method = RequestMethod.GET)
-	public @ResponseBody Staff getStaff(@RequestParam("staffID") String staffId){	
+	public @ResponseBody ResponseEntity<Staff> getStaff(@RequestParam("staffID") String staffId){	
 		Staff s = sdao.getStaff(staffId);
-		return s;	
+		if(sdao.isStaffExist(staffId)) {
+			return new ResponseEntity<Staff>(HttpStatus.NO_CONTENT);
+		}else {
+			return new ResponseEntity<Staff>(s,HttpStatus.OK);
+		}
 	}
 
 	@RequestMapping(value = URIconstants.GET_TESTS, method = RequestMethod.GET )
@@ -93,6 +97,22 @@ public class PersonController {
 	public ResponseEntity<BloodTest> deleteTest(@RequestParam("id") String tcNO, @RequestParam("name") String name) {
 		bdao.deleteTest(pdao.getPatient(tcNO), name);
 	return new ResponseEntity<BloodTest>(HttpStatus.NO_CONTENT); 
+	}
+	
+	@RequestMapping(
+			value = "/postStaff",
+			method = RequestMethod.POST,
+			produces = "application/json", 
+			consumes = "application/json"			
+			)
+	public ResponseEntity<Void> createStaff(@RequestBody Staff staff){
+		if(sdao.isStaffExist(staff.getId())) {
+			return new ResponseEntity<>(HttpStatus.CONFLICT);
+		}else {
+			sdao.addStaff(staff);
+			return new ResponseEntity<>(HttpStatus.CREATED);
+		}
+		
 	}
 	
 }
