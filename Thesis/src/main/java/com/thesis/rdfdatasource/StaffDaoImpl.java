@@ -2,8 +2,10 @@ package com.thesis.rdfdatasource;
 
 import java.sql.Connection;
 import java.sql.Statement;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Scanner;
 
 import com.thesis.utils.DB;
 import com.thesis.utils.ResultDispacther;
@@ -44,17 +46,34 @@ public class StaffDaoImpl implements StaffDao {
 	@Override
 	public Staff getStaffOfPatient(String staffUri) {
 		// TODO Auto-generated method stub
-		Staff staff;
+		Staff s = new Staff();
 		//http://www.semanticweb.org/mine/ontologies/2017/4/thyroid-ontology#nurse1
 
-		String queryString = "SELECT ?staffId ?name ?surname ?type"+ 
+		String queryString = "SELECT ?staffId ?name ?surname ?type "+ 
 				"WHERE {<"+staffUri+"> <http://www.semanticweb.org/mine/ontologies/2017/4/thyroid-ontology#hasStaffID> ?staffId."
 						+"<"+staffUri+"> <http://www.semanticweb.org/mine/ontologies/2017/4/thyroid-ontology#hasSurname> ?surname."
 						+"<"+staffUri+"> <http://www.semanticweb.org/mine/ontologies/2017/4/thyroid-ontology#hasName> ?name."
 						+"<"+staffUri+"> <http://www.semanticweb.org/mine/ontologies/2017/4/thyroid-ontology#hasType> ?type.}";
-		List<String> items = Arrays.asList(ResultDispacther.queryGetResult(queryString,25).split(","));	
-		staff = new Staff(items.get(1),items.get(2),items.get(0),items.get(3));	
-		return staff;
+		
+		List<String> items = new ArrayList<>();
+		
+		String[] infos;
+		Scanner sc = new Scanner(ResultDispacther.queryGetResult(queryString,25));
+		
+		while(sc.hasNext()) {
+			items.add(sc.next());
+		}
+		for (int i = 0; i < items.size(); i++) {	
+		
+			 infos = items.get(i).split(",");
+			 s.setId(infos[0]);
+			 s.setName(infos[1]);
+			 s.setSurname(infos[2]);
+			 s.setType(infos[3]);
+			 
+		}
+			
+		return s;
 	}
 
 	@Override
