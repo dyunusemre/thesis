@@ -4,6 +4,7 @@ import java.util.List;
 
 public interface PatientDao {
 	public List<Patient> getAllPatient();
+	public Patient getPatientOfDisease(String tcNo);
 	public Patient getPatient(String tcNo);
 	public void updatePatient(Patient patient);
 	public void deletePatient(Patient patient);

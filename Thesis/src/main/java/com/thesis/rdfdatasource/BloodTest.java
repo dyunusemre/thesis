@@ -8,10 +8,19 @@ public class BloodTest {
 	private Staff isDoneBy;
 	private TestValue defaultTestValues;
 	private int testResult;
+	private String disease;
 	public BloodTest(Patient patient) {
 		this.patient = patient;
 	}
 	public BloodTest() {};
+	
+	public Patient getPatient() {
+		return patient;
+	}
+	
+	public void setPatient(Patient patient) {
+		this.patient = patient;
+	}
 	public void setIsRequested(Staff isRequested) {
 		this.isRequested = isRequested;
 	}
@@ -47,5 +56,11 @@ public class BloodTest {
 	}
 	public void setTestType(String testType) {
 		this.testType = testType;
+	}
+    public String getDisease() {
+		return disease;
+	}
+    public void setDisease(String disease) {
+		this.disease = disease;
 	}
 }

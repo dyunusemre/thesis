@@ -184,4 +184,37 @@ public class PatientDaoImpl implements PatientDao {
 		e.printStackTrace();// TODO: handle exception
 		}
 	}
+
+	@Override
+	public Patient getPatientOfDisease(String tcNo) {
+		String queryString = "SELECT ?s " 
+				+ "WHERE {?s "
+				+ "<http://www.semanticweb.org/mine/ontologies/2017/4/thyroid-ontology#hasTCno> \""
+				+tcNo
+				+"\"^^<http://www.w3.org/2001/XMLSchema#string> .}";
+		String patientUri = ResultDispacther.queryGetResult(queryString,1);
+		queryString = "SELECT ?o "+ 
+    			"WHERE {<"+patientUri+"> <http://www.semanticweb.org/mine/ontologies/2017/4/thyroid-ontology#hasName> ?o .}";
+		String name = ResultDispacther.queryGetResult(queryString,1);
+		queryString = "SELECT ?o "+ 
+    			"WHERE {<"+patientUri+"> <http://www.semanticweb.org/mine/ontologies/2017/4/thyroid-ontology#hasSurname> ?o .}";
+		String surname = ResultDispacther.queryGetResult(queryString,1);
+		
+		queryString = "SELECT ?o "+ 
+    			"WHERE {<"+patientUri+"> <http://www.semanticweb.org/mine/ontologies/2017/4/thyroid-ontology#hasAge> ?o .}";
+		String age = ResultDispacther.queryGetResult(queryString,1);
+		queryString = "SELECT ?o "+ 
+    			"WHERE {<"+patientUri+"> <http://www.semanticweb.org/mine/ontologies/2017/4/thyroid-ontology#hasGender> ?o .}";
+		String gender = ResultDispacther.queryGetResult(queryString,1);	
+		
+		Patient p = new Patient(name,surname,tcNo,new ArrayList<BloodTest>(),gender,Integer.parseInt(age));
+		BloodTestDaoImpl b = new BloodTestDaoImpl();
+		p.setTest(b.getDisease(p));
+		for (BloodTest d : p.getTest()) {
+			System.out.println(d.getTestResult()+ d.getDisease()+ d.getTestType());
+		}
+		
+		return p;
+	}
+
 }

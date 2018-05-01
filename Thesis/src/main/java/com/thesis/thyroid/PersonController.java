@@ -23,9 +23,6 @@ import com.thesis.utils.URIconstants;
 public class PersonController {
 	
 	
-	
-	
-	
 	@RequestMapping(
 			value ="/patient",
 			params = {"id"}, 
@@ -59,6 +56,16 @@ public class PersonController {
 	public @ResponseBody List<Patient> getAllPatient(){
 		PatientDaoImpl pdao = new PatientDaoImpl();
 		return pdao.getAllPatient();
+	}
+	
+	@RequestMapping(
+			value ="/getDisease",
+			params = {"id"}, 
+			method = RequestMethod.GET)
+	public @ResponseBody Patient getDisease(@RequestParam("id") String tcNo){	
+		PatientDaoImpl pdao = new PatientDaoImpl();
+		Patient p = pdao.getPatientOfDisease(tcNo);
+		return p;	
 	}
 	
 	@RequestMapping(
@@ -120,4 +127,12 @@ public class PersonController {
 		
 	}
 	
+	@RequestMapping(
+			value ="/postTest", 
+			method = RequestMethod.POST)
+	public @ResponseBody ResponseEntity<Void> createTest(BloodTest test){	
+		BloodTestDaoImpl bdao = new BloodTestDaoImpl();
+		bdao.addTest(test);
+		return new ResponseEntity<>(HttpStatus.CREATED);
+	}
 }
